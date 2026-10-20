@@ -1,0 +1,11 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="57.646" height="57.646" viewBox="0 0 57.646 57.646" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Call chat buttons">
+<foreignObject x="0" y="0" width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="backdrop-filter:blur(15.56px);clip-path:url(#bgblur_0_0_47_clip_path);height:100%;width:100%"></div></foreignObject><circle id="avatar" data-figma-bg-blur-radius="31.1289" cx="28.823" cy="28.823" r="28.823" fill="#57D278"/>
+<g id="24/filledPhone">
+<path id="Vector" d="M21.9364 26.5043C21.7652 26.5664 21.6554 26.73 21.6554 26.9121V29.862C21.6554 30.676 21.282 31.445 20.6424 31.9484L17.3768 34.5185C16.9137 34.8829 16.5578 35.1213 15.9694 35.1539C15.1959 35.1967 14.31 34.7707 13.7774 34.2081L12.7008 33.071C11.7685 32.0862 11.0066 30.8294 11.274 29.4999C11.4817 28.4678 18.3334 22.482 28.0918 22.482C37.8503 22.482 44.702 28.4678 44.9096 29.4999C45.1771 30.8294 44.4152 32.0862 43.4828 33.071L42.4063 34.2081C41.8737 34.7707 40.9878 35.1967 40.2142 35.1539C39.6258 35.1213 39.2699 34.8829 38.8068 34.5185L35.5413 31.9484C34.9017 31.445 34.5283 30.676 34.5283 29.862V26.9051C34.5283 26.7265 34.4205 26.5645 34.2542 26.4992C29.3882 24.5868 24.3179 25.6396 21.9364 26.5043Z" fill="white"/>
+</g>
+</g>
+<defs>
+<clipPath id="bgblur_0_0_47_clip_path" transform="translate(0 0)"><circle cx="28.823" cy="28.823" r="28.823"/>
+</clipPath></defs>
+</svg>
