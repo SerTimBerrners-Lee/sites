@@ -5,6 +5,7 @@ const submitButton = modalForm.querySelector('[type="submit"]');
 const menuButton = document.querySelector('.menu-toggle');
 const menu = document.getElementById('main-nav');
 const backTop = document.querySelector('.back-top');
+const siteHeader = document.querySelector('.site-header');
 const documentModal = document.getElementById('document-modal');
 const documentScroll = document.getElementById('document-scroll');
 const documentTitle = document.getElementById('document-title');
@@ -154,6 +155,12 @@ document.querySelectorAll('[data-quick-form]').forEach(form => {
   const consentLabel = form.querySelector('.quick-consent');
   const tooltip = form.querySelector('.consent-tooltip');
   const contactTooltip = form.querySelector('.contact-tooltip');
+  const nameTooltip = form.querySelector('.name-tooltip');
+
+  function showNameError(show) {
+    nameTooltip.classList.toggle('is-visible', show);
+    nameTooltip.setAttribute('aria-hidden', String(!show));
+  }
 
   function showContactError(show) {
     contactTooltip.classList.toggle('is-visible', show);
@@ -186,14 +193,16 @@ document.querySelectorAll('[data-quick-form]').forEach(form => {
     if (valid) input.removeAttribute('aria-invalid');
     else input.setAttribute('aria-invalid', 'true');
     if (input === contact) showContactError(!valid);
+    if (input === name) showNameError(!valid);
     return valid;
   }
 
   form.addEventListener('input', event => {
     message.hidden = true;
     if (event.target === name || event.target === contact) {
-      if (event.target === contact && contactTooltip.classList.contains('is-visible')) {
-        validateField(contact, 'Введите корректный номер телефона или email');
+      if ((event.target === contact && contactTooltip.classList.contains('is-visible')) ||
+          (event.target === name && nameTooltip.classList.contains('is-visible'))) {
+        validateField(event.target, event.target === name ? 'Введите имя' : 'Введите корректный номер телефона или email');
       } else {
         event.target.setCustomValidity('');
         event.target.classList.remove('is-invalid');
@@ -214,7 +223,7 @@ document.querySelectorAll('[data-quick-form]').forEach(form => {
     const hasInput = Boolean(name.value || contact.value);
     if (hasInput) showConsentError(!consent.checked);
     const nameValid = validateField(name, 'Введите имя');
-    if (!nameValid) { name.reportValidity(); return; }
+    if (!nameValid) { name.focus(); return; }
     const contactValid = validateField(contact, 'Введите корректный номер телефона или email');
     if (!contactValid) { contact.focus(); return; }
     if (!consent.checked) { consent.focus(); return; }
@@ -247,6 +256,9 @@ menu.querySelectorAll('a').forEach(link => link.addEventListener('click', () => 
 }));
 
 backTop.addEventListener('click', () => window.scrollTo({top: 0, behavior: 'smooth'}));
-function updateBackTop() { backTop.classList.toggle('visible', window.scrollY > 120); }
+function updateBackTop() {
+  backTop.classList.toggle('visible', window.scrollY > 120);
+  siteHeader.classList.toggle('is-scrolled', window.scrollY > 1);
+}
 window.addEventListener('scroll', updateBackTop, {passive: true});
 updateBackTop();
