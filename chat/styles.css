@@ -496,7 +496,7 @@ html{scrollbar-gutter:stable}
 .document-heading{padding:27px 30px 21px;border-bottom:1px solid var(--line);align-items:center}
 .document-heading h2{font-size:24px}
 .document-heading .modal-close{display:grid;place-items:center;cursor:pointer}
-.document-scroll{min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:8px 30px 30px;color:var(--ink);font-size:15px;line-height:1.6;scrollbar-color:var(--light-blue) var(--pale)}
+.document-scroll{min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:8px 30px 30px;color:var(--ink);font-size:16px;line-height:1.6;scrollbar-color:var(--light-blue) var(--pale)}
 .document-scroll h3{font-size:18px;color:var(--ink);line-height:1.3;margin:25px 0 9px}
 .document-scroll p{margin:0 0 15px}
 .document-scroll a{color:var(--blue);text-decoration:underline}
@@ -682,7 +682,7 @@ html{scrollbar-gutter:stable}
   .phones-showcase img.terms-mobile-phone-back{z-index:1;left:173px;top:31px;width:211px}
 
   .contact-strip:not(.contact-bottom),.calls-section,.terms-section,.contact-bottom,.site-footer{background:transparent}
-  .contact-bottom{min-height:514px}
+  .contact-bottom{min-height:454px}
   .site-footer{min-height:368px;padding:40px 0 30px}
   .footer-grid{display:grid;grid-template-columns:174px 170px;grid-template-areas:"logo contacts" "documents requisites";column-gap:14px;row-gap:24px}
   .footer-logo{grid-area:logo;margin-left:39px}
@@ -706,4 +706,41 @@ html{scrollbar-gutter:stable}
   .calls-section .feature-list li,.calls-section .feature-list li:last-child{font-size:13px}
   .footer-grid{grid-template-columns:1fr 1fr}
   .footer-logo{margin-left:20px}
+}
+
+/* RuStore sits between the contact form and the darker footer. Keep its glow
+   on their shared canvas so it can extend above the new card without a seam. */
+.dark-flow{background-color:#373d51;background-image:url('./assets/rustore-glow-desktop.svg');background-repeat:no-repeat;background-size:974.421px 869.421px;background-position:calc(50% + 15.5px) calc(100% - 75px)}
+.dark-flow .terms-section,.dark-flow .contact-bottom,.dark-flow .rustore-section{background:transparent}
+.dark-flow .site-footer{background:#262a38}
+.rustore-section{position:relative;min-height:387px;padding:40px 24px 80px;color:#fff}
+.rustore-card{width:min(657px,100%);min-height:267px;margin:auto;padding:34px 40px;border-radius:40px;background:#262a38;display:flex;align-items:center;gap:25px}
+.rustore-content{width:392px;max-width:100%;display:flex;flex-direction:column;align-items:flex-start;gap:24px}
+.rustore-copy{width:100%;display:flex;flex-direction:column;gap:24px}
+.rustore-heading{display:flex;align-items:center;gap:15px;min-height:52px}
+.rustore-heading strong,.rustore-heading small{display:block;white-space:nowrap}
+.rustore-heading strong{font-size:24px;line-height:1.2}
+.rustore-heading small{margin-top:3px;color:#9cbeff;font-size:16px;line-height:1.2}
+.rustore-app-icon{display:block;flex:none;width:52px;height:52px;object-fit:contain}
+.rustore-content p{margin:0;font-size:18px;line-height:1.35;white-space:nowrap}
+.rustore-link{width:200px;min-height:50px;padding:10px 12px;font-size:16px;white-space:nowrap}
+.rustore-scan{flex:none;width:160px;display:flex;flex-direction:column;align-items:center;gap:10px;font-size:14px;line-height:1.2;white-space:nowrap}
+.rustore-qr{display:block;width:160px;height:160px;padding:8px;border-radius:15px;background:#fff}
+.rustore-qr img{width:144px;height:144px}
+@media(max-width:760px){
+  .dark-flow{background-image:url('./assets/rustore-glow-mobile.svg');background-size:749.421px 831.421px;background-position:calc(50% - 20px) calc(100% - 219px)}
+  .rustore-section{min-height:482px;padding:0 16px 40px}
+  .rustore-card{width:min(358px,100%);min-height:442px;padding:25px;flex-direction:column;align-items:center;justify-content:flex-start;gap:30px}
+  .rustore-content{width:min(278px,100%);align-items:center;gap:20px}
+  .rustore-copy{gap:15px}
+  .rustore-heading strong{font-size:20px}
+  .rustore-heading small{font-size:14px}
+  .rustore-content p{font-size:16px;line-height:normal}
+}
+@media(max-width:365px){
+  .rustore-content p{white-space:normal}
+  .rustore-heading{gap:10px}
+  .rustore-heading strong{font-size:19px}
+  .rustore-heading small{font-size:13px}
+  .rustore-card{min-height:442px;height:auto}
 }
