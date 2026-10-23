@@ -1,3 +1,24 @@
+// Give illustrations a short reveal when their decoded image is ready.
+// SVG icons stay visible immediately, even while lower-page artwork loads.
+document.documentElement.classList.add('has-image-reveal');
+function whenImageReady(image) {
+  return new Promise(resolve => {
+    const finish = () => {
+      if (!image.naturalWidth || typeof image.decode !== 'function') { resolve(); return; }
+      image.decode().catch(() => {}).then(resolve);
+    };
+    if (image.complete) { finish(); return; }
+    image.addEventListener('load', finish, {once: true});
+    image.addEventListener('error', resolve, {once: true});
+  });
+}
+document.querySelectorAll('img[data-fade]').forEach(image => {
+  whenImageReady(image).then(() => image.classList.add('is-ready'));
+});
+const heroArtwork = document.querySelector('.hero-art');
+Promise.all([...heroArtwork.querySelectorAll('img')].map(whenImageReady))
+  .then(() => heroArtwork.classList.add('is-ready'));
+
 const modal = document.getElementById('demo-modal');
 const modalForm = document.getElementById('demo-form');
 const modalMessage = document.getElementById('form-message');
