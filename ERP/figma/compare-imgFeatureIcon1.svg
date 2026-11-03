@@ -1,0 +1,19 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="Feature Icon">
+<g id="Vector">
+<use xlink:href="#stroke0_0_68" fill="#FF6868"/>
+<mask id="stroke1_0_68" fill="white">
+<use xlink:href="#stroke0_0_68"/>
+</mask>
+<path d="M20 2.5C10.34 2.5 2.5 10.34 2.5 20C2.5 29.66 10.34 37.5 20 37.5C29.66 37.5 37.5 29.66 37.5 20C37.5 10.34 29.66 2.5 20 2.5ZM20 34C12.265 34 6 27.735 6 20C6 12.265 12.265 6 20 6C27.735 6 34 12.265 34 20C34 27.735 27.735 34 20 34Z" stroke-width="3.25" stroke="#FF6868" mask="url(#stroke1_0_68)"/>
+</g>
+<circle id="Ellipse 1" cx="20" cy="20" r="10" transform="rotate(-180 20 20)" fill="#FF6868"/>
+<g id="Cross Icon">
+<path id="Vector_2" d="M23.75 16.25L16.25 23.75" stroke-linecap="round" stroke-linejoin="round" stroke="white"/>
+<path id="Vector_3" d="M16.25 16.25L23.75 23.75" stroke-linecap="round" stroke-linejoin="round" stroke="white"/>
+</g>
+</g>
+<defs>
+<path id="stroke0_0_68" d="M20 2.5C10.34 2.5 2.5 10.34 2.5 20C2.5 29.66 10.34 37.5 20 37.5C29.66 37.5 37.5 29.66 37.5 20C37.5 10.34 29.66 2.5 20 2.5ZM20 34C12.265 34 6 27.735 6 20C6 12.265 12.265 6 20 6C27.735 6 34 12.265 34 20C34 27.735 27.735 34 20 34Z"/>
+</defs>
+</svg>
