@@ -1,6 +1,45 @@
+// Progressive enhancement: cards stay visible without JS or observer support.
+function setupCardReveals() {
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (reducedMotion.matches || !('IntersectionObserver' in window)) return;
+
+  const cards = [...document.querySelectorAll(
+    '.benefit-card, .story-card, .feature-list > li, .ai-card, .terms-cards > article'
+  )];
+  const groups = new Map();
+  cards.forEach(card => {
+    if (!groups.has(card.parentElement)) groups.set(card.parentElement, []);
+    groups.get(card.parentElement).push(card);
+  });
+
+  const observer = new IntersectionObserver(entries => {
+    const entering = new Set(entries.filter(entry => entry.isIntersecting).map(entry => entry.target));
+    // Only stagger siblings entering together; a lone mobile card starts at once.
+    groups.forEach(group => group.filter(card => entering.has(card)).forEach((card, index) => {
+      card.style.setProperty('--card-reveal-delay', `${Math.min(index, 3) * 90}ms`);
+      card.classList.add('is-revealed');
+      observer.unobserve(card);
+    }));
+  }, {threshold: 0.08, rootMargin: '0px 0px -24px 0px'});
+
+  cards.forEach(card => {
+    card.classList.add('card-reveal');
+    observer.observe(card);
+  });
+
+  // Respect a preference change while this page is open, without re-hiding cards.
+  reducedMotion.addEventListener('change', event => {
+    if (!event.matches) return;
+    observer.disconnect();
+    cards.forEach(card => card.classList.add('is-revealed'));
+  });
+
+}
+setupCardReveals();
+
 // Give illustrations a short reveal when their decoded image is ready.
 // SVG icons stay visible immediately, even while lower-page artwork loads.
-document.documentElement.classList.add('has-image-reveal');
+document.documentElement.classList.add('has-image-reveal', 'image-reveal-initialized');
 function whenImageReady(image) {
   return new Promise(resolve => {
     const finish = () => {
@@ -16,8 +55,10 @@ document.querySelectorAll('img[data-fade]').forEach(image => {
   whenImageReady(image).then(() => image.classList.add('is-ready'));
 });
 const heroArtwork = document.querySelector('.hero-art');
-Promise.all([...heroArtwork.querySelectorAll('img')].map(whenImageReady))
-  .then(() => heroArtwork.classList.add('is-ready'));
+if (heroArtwork) {
+  Promise.all([...heroArtwork.querySelectorAll('img')].map(whenImageReady))
+    .then(() => heroArtwork.classList.add('is-ready'));
+}
 
 const modal = document.getElementById('demo-modal');
 const modalForm = document.getElementById('demo-form');

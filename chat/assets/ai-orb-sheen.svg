@@ -1,0 +1,10 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="143" height="143" viewBox="0 0 143 143" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle id="Sheen" opacity="0.9" cx="71.5" cy="71.5" r="71.5" fill="url(#paint0_radial_0_357)"/>
+<defs>
+<radialGradient id="paint0_radial_0_357" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(128.207 130.672) scale(123.276)">
+<stop stop-color="white" stop-opacity="0.8"/>
+<stop offset="0.5" stop-color="#9CBEFF" stop-opacity="0.22"/>
+<stop offset="1" stop-color="#548CF6" stop-opacity="0"/>
+</radialGradient>
+</defs>
+</svg>

@@ -150,13 +150,17 @@
 .chat-section .feature-list li{border-radius:35px;padding:20px 25px;box-shadow:0 4px 4.9px #0000000d}
 .calls-section .feature-list li{width:386px;max-width:100%;border-radius:35px;padding:20px 15px;gap:8px;background:#606884;box-shadow:0 4px 4.9px #0000000d;white-space:nowrap}
 .calls-section .feature-list li:last-child{width:max-content;max-width:none;padding-inline:25px}
-.call-handset{position:absolute;left:-262px;top:437px;width:406px;height:406px;max-width:none;opacity:.1;pointer-events:none}
+.call-handset{--image-opacity:.1;position:absolute;left:-262px;top:437px;width:406px;height:406px;max-width:none;opacity:.1;pointer-events:none}
 .call-main{left:69px;top:59px;width:351px;max-width:none}
 .call-side{right:-12px;top:363px;width:312px;max-width:none}
 
 .ai-section{background:radial-gradient(ellipse 950px 730px at 50% 720px,#dce8ff 0%,#eaf1ff 48%,#fff 100%)}
 .ai-orb{width:315px;height:315px;margin-bottom:0;background:none;display:block}
 .ai-orb img{width:315px;height:315px;object-fit:contain}
+.ai-orb.ai-orb-animated{position:relative;background:url('./assets/ai-orb-sheen.svg') center/63.6% auto no-repeat,url('./assets/ai-orb-shell.svg') center bottom/100% auto no-repeat,url('./assets/ai-orb-halo.svg') center/100% auto no-repeat}
+.ai-orb-animated picture{position:absolute;width:64%;aspect-ratio:1;left:18%;top:14%}
+.ai-orb-animated .ai-orb-robot{width:100%;height:100%;object-fit:contain}
+.chat-section .eyebrow,.clients-section .eyebrow{color:var(--blue)}
 .ai-card{width:min(665px,100%);min-height:208px;padding:24px;gap:10px;align-items:flex-start;box-shadow:0 0 11px #00000012}
 .ai-card h3{font-weight:700}
 .assistant-screen{left:-13px;width:631px;max-width:none}
@@ -673,10 +677,10 @@ html{scrollbar-gutter:stable}
   .terms-cards h3{font-size:20px;line-height:1.2;margin:0 0 10px}
   .terms-cards p{font-size:14px;line-height:1.2}
   .terms-section>.wrap>.button{width:100%;height:56px;min-height:56px;font-size:16px;border-radius:5px}
-  .terms-section::before{top:540px;height:420px}
+  .terms-section::before{top:540px;height:420px;background:radial-gradient(ellipse 650px 210px at 50% 50%,rgba(106,150,207,.28),transparent 76%)}
   .phones-showcase{height:346px;width:100%;margin:48px auto 0}
   .phones-showcase .terms-preview-left,.phones-showcase .terms-preview-right{display:none}
-  .phones-showcase .terms-right-panel{left:29px;top:39px;width:388px;height:307px;border-radius:10px 0 0 0;background:rgba(214,228,255,.1)}
+  .phones-showcase .terms-right-panel{left:29px;right:0;top:39px;width:auto;height:307px;border-radius:10px 0 0 10px;background:rgba(214,228,255,.1)}
   .phones-showcase img.terms-mobile-phone{display:block;height:auto;max-width:none}
   .phones-showcase img.terms-mobile-phone-front{z-index:2;left:16px;top:0;width:224px}
   .phones-showcase img.terms-mobile-phone-back{z-index:1;left:173px;top:31px;width:211px}
@@ -685,7 +689,7 @@ html{scrollbar-gutter:stable}
   .contact-bottom{min-height:454px}
   .site-footer{min-height:368px;padding:40px 0 30px}
   .footer-grid{display:grid;grid-template-columns:174px 170px;grid-template-areas:"logo contacts" "documents requisites";column-gap:14px;row-gap:24px}
-  .footer-logo{grid-area:logo;margin-left:39px}
+  .footer-logo{grid-area:logo;margin-left:15px}
   .footer-logo img{width:90px}
   .footer-grid>div:nth-of-type(1){grid-area:contacts}
   .footer-grid>div:nth-of-type(2){grid-area:requisites}
@@ -705,12 +709,14 @@ html{scrollbar-gutter:stable}
   .story-card p{font-size:15px}
   .calls-section .feature-list li,.calls-section .feature-list li:last-child{font-size:13px}
   .footer-grid{grid-template-columns:1fr 1fr}
-  .footer-logo{margin-left:20px}
 }
 
 /* RuStore sits between the contact form and the darker footer. Keep its glow
    on their shared canvas so it can extend above the new card without a seam. */
-.dark-flow{background-color:#373d51;background-image:url('./assets/rustore-glow-desktop.svg');background-repeat:no-repeat;background-size:974.421px 869.421px;background-position:calc(50% + 15.5px) calc(100% - 75px)}
+.dark-flow{position:relative;isolation:isolate;background-color:#373d51;background-image:url('./assets/rustore-glow-desktop.svg');background-repeat:no-repeat;background-size:974.421px 869.421px;background-position:calc(50% + 15.5px) calc(100% - 75px)}
+/* Exact Figma teal ellipse, including its blur bounds. Keep it on the shared
+   canvas so the glow cannot be cut off at the terms/contact boundary. */
+.dark-flow::before{content:"";position:absolute;z-index:-1;inset:0;background:url('./assets/terms-teal-glow.svg') no-repeat calc(50% + 39px) -66.19px/1282.82px 1283.61px;opacity:.8;pointer-events:none}
 .dark-flow .terms-section,.dark-flow .contact-bottom,.dark-flow .rustore-section{background:transparent}
 .dark-flow .site-footer{background:#262a38}
 .rustore-section{position:relative;min-height:387px;padding:40px 24px 80px;color:#fff}
@@ -729,6 +735,7 @@ html{scrollbar-gutter:stable}
 .rustore-qr img{width:144px;height:144px}
 @media(max-width:760px){
   .dark-flow{background-image:url('./assets/rustore-glow-mobile.svg');background-size:749.421px 831.421px;background-position:calc(50% - 20px) calc(100% - 219px)}
+  .dark-flow::before{background-size:1169.54px 1170.26px;background-position:calc(50% + 25.12px) -112.88px}
   .rustore-section{min-height:482px;padding:0 16px 40px}
   .rustore-card{width:min(358px,100%);min-height:442px;padding:25px;flex-direction:column;align-items:center;justify-content:flex-start;gap:30px}
   .rustore-content{width:min(278px,100%);align-items:center;gap:20px}
@@ -745,11 +752,26 @@ html{scrollbar-gutter:stable}
   .rustore-card{min-height:442px;height:auto}
 }
 
+/* Reveal cards once with the approved, opacity-only animation. */
+@media(prefers-reduced-motion:no-preference){
+  .card-reveal{opacity:0;transition:opacity .6s ease-in-out;transition-delay:var(--card-reveal-delay,0ms)}
+  .card-reveal.is-revealed{opacity:1}
+}
+@media print{
+  .card-reveal{opacity:1;transition:none}
+}
 /* Reveal decoded illustrations without delaying SVG icons or reduced-motion users. */
 @media(prefers-reduced-motion:no-preference){
-  .has-image-reveal .hero-art,.has-image-reveal img[data-fade]{opacity:0;transition:opacity .36s ease}
-  .has-image-reveal .hero-art.is-ready,.has-image-reveal img[data-fade].is-ready{opacity:1}
+  .has-image-reveal img[data-fade]{opacity:0;transition:opacity .36s ease}
+  .has-image-reveal img[data-fade].is-ready{opacity:var(--image-opacity,1)}
+  .has-image-reveal .hero-art{opacity:0}
+  /* Keyframes run even when cached images decode before the first paint. */
+  .has-image-reveal .hero-art.is-ready{opacity:var(--hero-art-opacity,1);animation:hero-art-reveal .8s ease-in-out both}
+  @keyframes hero-art-reveal{
+    from{opacity:0}
+    to{opacity:var(--hero-art-opacity,1)}
+  }
 }
 @media(max-width:760px) and (prefers-reduced-motion:no-preference){
-  .has-image-reveal .hero-art.is-ready{opacity:.7}
+  .hero-art{--hero-art-opacity:.7}
 }
