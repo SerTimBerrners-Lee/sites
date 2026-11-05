@@ -1,4 +1,4 @@
-import{R as r,j as o,a as d,A as s}from"./App-BWIXzPHu.js";const l=`:root {
+import{R as r,j as o,a as d,A as s}from"./App-C83bz_mq.js";const l=`:root {
   font-family: "Inter Variable", Inter, Arial, sans-serif;
   color: #262a38;
   background: #f8f9fd;
@@ -3262,7 +3262,7 @@ dialog::backdrop {
   max-width: calc(100% - 32px);
 }
 .preview-dialog .dialog-body {
-  padding: 20px 30px;
+  padding: 20px 23px 20px 30px;
 }
 .preview-dialog .dialog-footer {
   border-top: 0;
@@ -3270,7 +3270,7 @@ dialog::backdrop {
 .expanded-preview {
   width: auto;
   height: auto;
-  max-width: min(1380px, calc(100vw - 92px));
+  max-width: min(1380px, calc(100vw - 85px));
   max-height: calc(100dvh - 230px);
   object-fit: contain;
   margin-inline: auto;
@@ -3534,6 +3534,16 @@ dialog::backdrop {
   }
   .dialog-body {
     padding: 22px;
+  }
+  .preview-dialog {
+    width: calc(100% - 32px);
+  }
+  .preview-dialog .dialog-body {
+    padding-inline: 22px;
+  }
+  .preview-dialog .expanded-preview {
+    width: 100%;
+    max-width: 100%;
   }
   .dialog-footer {
     padding: 13px 22px;
@@ -4289,7 +4299,7 @@ dialog::backdrop {
     height: 96px;
   }
 }
-`;function x(a,n=390){return`${a.replace(/\((min|max)-width:\s*(\d+(?:\.\d+)?)px\)/g,(p,e,i)=>(e==="min"?n>=Number(i):n<=Number(i))?"(min-width: 0px)":"(max-width: 0px)").replace(/(-?\d*\.?\d+)vw\b/g,(p,e)=>`${Number(e)*n/100}px`)}
+`;function x(a,n=390){return`${a.replace(/\((min|max)-width:\s*(\d+(?:\.\d+)?)px\)/g,(p,e,t)=>(e==="min"?n>=Number(t):n<=Number(t))?"(min-width: 0px)":"(max-width: 0px)").replace(/(-?\d*\.?\d+)vw\b/g,(p,e)=>`${Number(e)*n/100}px`)}
     html { background: #e9edf5; }
     body {
       width: min(${n}px, 100%);
@@ -4304,4 +4314,4 @@ dialog::backdrop {
     .back-to-top {
       right: max(16px, calc((100vw - ${n}px) / 2 + 16px));
     }
-  `}const t=document.createElement("style");t.dataset.mobilePreview="390";t.textContent=x(l).replaceAll("/figma/","./figma/");document.head.append(t);r.createRoot(document.getElementById("root")).render(o.jsx(d.StrictMode,{children:o.jsx(s,{})}));
+  `}const i=document.createElement("style");i.dataset.mobilePreview="390";i.textContent=x(l).replaceAll("/figma/","./figma/");document.head.append(i);r.createRoot(document.getElementById("root")).render(o.jsx(d.StrictMode,{children:o.jsx(s,{})}));
