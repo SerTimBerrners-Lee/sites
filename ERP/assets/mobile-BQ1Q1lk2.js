@@ -1,4 +1,4 @@
-import{R as r,j as o,a as d,A as s}from"./App-C83bz_mq.js";const l=`:root {
+import{R as r,j as o,a as d,A as s}from"./App-CYuar5XK.js";const l=`:root {
   font-family: "Inter Variable", Inter, Arial, sans-serif;
   color: #262a38;
   background: #f8f9fd;
@@ -50,6 +50,20 @@ button {
 img {
   display: block;
   max-width: 100%;
+}
+.brand-icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  background-color: var(--brand);
+  -webkit-mask: var(--icon-source) center / contain no-repeat;
+  mask: var(--icon-source) center / contain no-repeat;
+}
+.brand-icon > img {
+  width: 100%;
+  height: 100%;
+  opacity: 0;
 }
 h1,
 h2,
@@ -527,25 +541,27 @@ h1 span,
   min-height: 410px;
 }
 .ai-orb {
+  --orb-size: 225px;
   position: absolute;
   top: -30px;
   left: 50%;
-  width: 225px;
-  height: 236px;
+  width: var(--orb-size);
+  height: var(--orb-size);
   object-fit: contain;
   transform: translateX(-50%);
   transition: transform 0.25s ease;
   background:
-    url("/figma/ai-imgSheen.svg") center / 63.6% auto no-repeat,
-    url("/figma/ai-imgShellBrand.svg") center bottom / 100% auto no-repeat,
-    url("/figma/ai-imgHaloAmbient.svg") center / 100% auto no-repeat;
+    url("/figma/ai-imgSheen.svg") center / 65% auto no-repeat,
+    url("/figma/ai-imgShellBrand.svg") center calc(50% + var(--orb-size) * 0.05) / 102% auto no-repeat,
+    url("/figma/ai-imgHaloAmbient.svg") center / 102% auto no-repeat;
 }
 .ai-orb picture {
   position: absolute;
   width: 64%;
   aspect-ratio: 1;
-  left: 18%;
-  top: 19%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 .ai-robot {
   width: 100%;
@@ -820,7 +836,7 @@ h1 span,
   min-height: 70px;
   color: var(--heading);
 }
-.chat-features img {
+.chat-features .brand-icon {
   height: 30px;
   width: 30px;
   object-fit: contain;
@@ -1832,7 +1848,7 @@ dialog::backdrop {
     padding: 16px 18px;
     gap: 10px;
   }
-  .chat-features img {
+  .chat-features .brand-icon {
     width: 24px;
     height: 24px;
   }
@@ -2123,8 +2139,7 @@ dialog::backdrop {
     min-height: 0;
   }
   .ai-orb {
-    width: 170px;
-    height: 178px;
+    --orb-size: 170px;
     top: -20px;
   }
   .lightning-left {
@@ -2150,9 +2165,6 @@ dialog::backdrop {
   .ai-layout {
     gap: 30px;
     margin-top: 32px;
-  }
-  .chat-window {
-    border-radius: 14px;
   }
   .chat-window-header {
     padding: 8px 12px;
@@ -2264,7 +2276,7 @@ dialog::backdrop {
     min-height: 60px;
     border-radius: 30px;
   }
-  .chat-features img {
+  .chat-features .brand-icon {
     width: 26px;
     height: 26px;
   }
@@ -2383,12 +2395,12 @@ dialog::backdrop {
     overflow-wrap: break-word;
   }
   .comparison tbody td {
-    padding: 16px 6px;
+    padding: 16px 2px;
     height: auto;
   }
   .comparison tbody img {
-    width: 24px;
-    height: 24px;
+    width: 30px;
+    height: 30px;
   }
   .scroll-hint {
     display: none;
@@ -2641,7 +2653,7 @@ dialog::backdrop {
     min-height: clamp(56px, 5.303cqw, 70px);
     gap: clamp(9px, 0.909cqw, 12px);
   }
-  .chat-features img {
+  .chat-features .brand-icon {
     width: clamp(24px, 2.273cqw, 30px);
     height: clamp(24px, 2.273cqw, 30px);
   }
@@ -3414,11 +3426,9 @@ dialog::backdrop {
   text-align: left;
   transition: background-color 0.2s ease;
 }
-.chat-input-preview .permission img,
-.chat-input-preview .quick img {
+.chat-input-preview .permission .brand-icon,
+.chat-input-preview .quick .brand-icon {
   flex-shrink: 0;
-  filter: invert(61%) sepia(54%) saturate(665%) hue-rotate(187deg)
-    brightness(103%) contrast(101%);
 }
 .chat-input-preview .permission:hover,
 .chat-input-preview .quick:hover,
@@ -3738,6 +3748,7 @@ dialog::backdrop {
   }
   .hero-copy .button {
     margin-top: 20px;
+    max-width: none;
     padding-inline: 13px;
     font-size: 16px;
     font-weight: 500;
@@ -3763,7 +3774,7 @@ dialog::backdrop {
     white-space: nowrap;
   }
   .audience .lead {
-    margin-top: 0;
+    margin-top: 20px;
   }
   .audience-grid {
     margin-top: 20px;
@@ -3940,7 +3951,7 @@ dialog::backdrop {
     display: none;
   }
   .chat-window {
-    border-radius: 15px;
+    max-width: 380px;
     min-height: 714px;
     display: flex;
     flex-direction: column;
@@ -4060,7 +4071,13 @@ dialog::backdrop {
   .chat-input-preview .quick .mobile-setting-icon {
     width: 25.412px;
     height: 25.412px;
-    filter: none;
+  }
+
+  :root[data-input-modality="pointer"] .close-button:focus-visible,
+  :root[data-input-modality="pointer"] .chat-setting-menu > button:focus-visible,
+  :root[data-input-modality="pointer"] .chat-input-preview .permission:focus-visible,
+  :root[data-input-modality="pointer"] .chat-input-preview .quick:focus-visible {
+    outline: none;
   }
 
   .chat-section {
@@ -4153,6 +4170,10 @@ dialog::backdrop {
   }
   .comparison tbody th {
     line-height: 19px;
+  }
+  .comparison-duration {
+    display: block;
+    white-space: nowrap;
   }
   .comparison tbody td {
     height: 73.594px;
@@ -4297,6 +4318,41 @@ dialog::backdrop {
     top: 43%;
     width: 96px;
     height: 96px;
+  }
+}
+
+/* Same soft reveals as the chat landing; hover transforms remain independent. */
+@media (prefers-reduced-motion: no-preference) {
+  .card-reveal {
+    opacity: 0;
+  }
+  .card-reveal.is-revealed {
+    opacity: 1;
+    animation: landing-card-reveal 0.6s ease-in-out var(--card-reveal-delay, 0ms) both;
+  }
+  .card-reveal:focus-within {
+    opacity: 1;
+  }
+  .image-reveal {
+    transition: opacity 0.36s ease;
+  }
+  .image-reveal:not(.is-ready) {
+    opacity: 0;
+  }
+  .hero-preview .image-reveal.is-ready {
+    animation: landing-card-reveal 0.8s ease-in-out both;
+  }
+}
+@keyframes landing-card-reveal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@media print {
+  .card-reveal,
+  .image-reveal {
+    opacity: 1 !important;
+    animation: none !important;
+    transition: none !important;
   }
 }
 `;function x(a,n=390){return`${a.replace(/\((min|max)-width:\s*(\d+(?:\.\d+)?)px\)/g,(p,e,t)=>(e==="min"?n>=Number(t):n<=Number(t))?"(min-width: 0px)":"(max-width: 0px)").replace(/(-?\d*\.?\d+)vw\b/g,(p,e)=>`${Number(e)*n/100}px`)}
