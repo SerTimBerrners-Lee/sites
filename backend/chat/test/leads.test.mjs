@@ -92,8 +92,8 @@ test("all three sources send only to/from fixed mailbox; visitor email is Reply-
       from: "info@pksep.ru",
       to: ["info@pksep.ru"],
     });
-    assert.equal(mail.from.name, "SEP:Chat");
-    assert.equal(mail.subject, "Заявка на демонстрацию SEP:Chat");
+    assert.equal(mail.from.name, "СЭП:ЧАТ");
+    assert.equal(mail.subject, "Заявка на демонстрацию СЭП:ЧАТ");
     assert.match(mail.messageId, /^<chat-/);
     assert.equal(mail.from.address, "info@pksep.ru");
     assert.equal(mail.to, "info@pksep.ru");

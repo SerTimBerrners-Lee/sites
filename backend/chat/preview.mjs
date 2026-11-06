@@ -28,7 +28,7 @@ export function createPreviewServer({backendPort = 3002} = {}) {
     }
     // Exercise the same relative asset paths as production at /chat/ as well.
     const staticPath = path.startsWith('/chat/') ? path.slice(5) : path;
-    const allowed = ['/', '/index.html', '/script.js', '/styles.css', '/shared-chrome.css'].includes(staticPath) || /^\/assets\/[a-zA-Z0-9_.-]+$/.test(staticPath);
+    const allowed = ['/', '/index.html', '/script.js', '/styles.css', '/shared-chrome.css', '/ai-demo.js', '/ai-demo.css'].includes(staticPath) || /^\/assets\/[a-zA-Z0-9_.-]+$/.test(staticPath);
     if (!allowed || !['GET','HEAD'].includes(req.method)) {res.writeHead(404); res.end(); return;}
     const file = resolve(root, staticPath === '/' ? 'index.html' : staticPath.slice(1));
     try {

@@ -10,7 +10,8 @@
     "start": "node server.mjs",
     "test": "node --test test/*.test.mjs",
     "preview": "node preview.mjs",
-    "test:browser": "node --test test/browser.mjs"
+    "test:browser": "node --test test/browser.mjs",
+    "test:ai": "node --test test/ai-demo.mjs"
   },
   "dependencies": {
     "nodemailer": "^10.3.1"

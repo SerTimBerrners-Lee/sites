@@ -1,0 +1,13 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="fi-sr-checkbox" clip-path="url(#clip0_0_12)">
+<g id="Checkbox icon box / medium / default">
+<path id="Vector" d="M15.8333 0H4.16668C1.86664 0.00277344 0.00277344 1.86664 0 4.16668V15.8334C0.00277344 18.1334 1.86664 19.9973 4.16668 20H15.8334C18.1334 19.9973 19.9973 18.1334 20 15.8333V4.16668C19.9973 1.86664 18.1334 0.00277344 15.8333 0Z" fill="#9CBEFF"/>
+</g>
+<path id="Vector_2" d="M15.8333 5.83333L7.5 14.175L5 11.675" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round" stroke="#373D51"/>
+</g>
+<defs>
+<clipPath id="clip0_0_12">
+<rect width="20" height="20" fill="white"/>
+</clipPath>
+</defs>
+</svg>

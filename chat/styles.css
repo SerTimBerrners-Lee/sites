@@ -455,6 +455,10 @@ form[aria-busy="true"] input{cursor:wait}
 .quick-form .quick-consent.is-invalid input{border-color:#ff6868;background:rgba(255,104,104,.12)}
 .quick-form input.is-invalid:not([type="checkbox"]){border-color:#ff6868}
 .modal-field input.is-invalid{border-color:#ff6868}
+.modal-field,.modal .consent{position:relative}
+.modal .name-tooltip,.modal .contact-tooltip{max-width:100%;white-space:normal}
+.modal .consent-tooltip{left:0;top:calc(100% + 9px);bottom:auto;max-width:100%;white-space:normal}
+.modal .consent.is-invalid input{border-color:#ff6868;background-color:rgba(255,104,104,.12)}
 .quick-name-field,.quick-contact-field{position:relative;display:block;flex:none;width:400px;height:56px}
 .quick-name-field input,.quick-contact-field input{width:100%}
 .consent-tooltip,.contact-tooltip,.name-tooltip{position:absolute;z-index:5;padding:8px 16px;border-radius:8px;background:#262a38;color:#fff;font-size:14px;line-height:1.2;white-space:nowrap;opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-4px);transition:opacity .2s ease,transform .2s ease,visibility .2s}
@@ -757,6 +761,59 @@ form[aria-busy="true"] input{cursor:wait}
   .rustore-card{min-height:442px;height:auto}
 }
 
+/* Reviewed header and contact layouts from the updated Figma frames. */
+.site-footer{padding:80px 0;min-height:331px}
+.footer-grid{display:grid;grid-template-columns:180px repeat(3,minmax(0,290px));justify-content:space-between;gap:40px}
+.footer-logo{display:block;width:180px;height:180px;margin:0;grid-column:auto}
+.footer-logo img{width:180px;height:180px}
+.footer-grid h2{color:#fff;font-size:24px;font-weight:700;line-height:normal;margin:0 0 20px}
+.footer-details{display:flex;flex-direction:column;gap:10px;min-width:0}
+.footer-grid p,.footer-grid a:not(.footer-logo){color:#fff;font-size:14px;font-weight:600;line-height:normal;margin:0}
+.footer-contact-row{display:flex;align-items:flex-start;gap:8px;min-width:0}
+.footer-contact-row:first-child{align-items:center}
+.footer-contact-icon{display:flex;align-items:center;justify-content:center;flex:0 0 24px;width:24px;height:24px}
+.footer-contact-icon img{width:24px;height:24px}
+.footer-location-icon img{width:17px;height:24px}
+.footer-emails{display:flex;align-items:center;gap:8px;min-height:24px;flex-wrap:wrap}
+.footer-email-dot{color:var(--blue);line-height:1}
+.footer-documents a{text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+@media(min-width:761px){
+  .site-header{height:70px}
+  .header-inner{width:min(1320px,calc(100% - 120px));gap:clamp(20px,3.48vw,50px)}
+  .brand,.brand img{width:60px;height:60px}
+  .brand{border-radius:17.143px;background:transparent;overflow:hidden}
+  .main-nav{margin-left:clamp(0px,calc((100vw - 1200px)*.5083 - 20px),102px);margin-right:auto;gap:20px;font-size:16px}
+  .header-actions{gap:40px}
+  .header-phone{font-size:18px;gap:8px}
+  .header-phone img{width:24px;height:24px}
+  .header-actions .button{height:40px;min-height:40px;padding:11px 13px;font-size:14px;font-weight:700}
+}
+@media(min-width:761px) and (max-width:1100px){
+  .header-inner{width:calc(100% - 48px);gap:20px}
+  .main-nav{gap:14px;font-size:14px}
+  .header-actions{gap:16px}
+  .header-phone{font-size:0}
+  .header-actions .button{font-size:12px;padding-inline:10px}
+  .footer-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:32px 40px}
+  .footer-logo,.footer-logo img{width:120px;height:120px}
+  .footer-grid h2{font-size:20px}
+}
+@media(max-width:760px){
+  .site-footer{min-height:0;padding:60px 0}
+  .footer-grid{display:flex;flex-direction:column;align-items:flex-start;gap:20px;width:min(350px,calc(100% - 40px))}
+  .footer-logo{width:80px;height:80px;margin:0 0 10px}
+  .footer-logo img{width:80px;height:80px}
+  .footer-grid>div:nth-of-type(n){width:100%;margin:0}
+  .footer-grid h2{font-size:20px;font-weight:600;line-height:normal;margin:0 0 16px}
+  .footer-grid p,.footer-grid a:not(.footer-logo){font-size:16px;font-weight:400;line-height:normal;overflow-wrap:anywhere}
+  .footer-details{gap:10px}
+  .footer-contact-row{display:block}
+  .footer-contact-row:first-child{min-height:24px;padding-top:2px}
+  .footer-contact-icon{display:none}
+  .footer-emails{gap:4px;min-height:26px;align-items:flex-start;padding-top:2px}
+  .footer-documents .footer-details{gap:14px}
+}
+
 /* Reveal cards once with the approved, opacity-only animation. */
 @media(prefers-reduced-motion:no-preference){
   .card-reveal{opacity:0;transition:opacity .6s ease-in-out;transition-delay:var(--card-reveal-delay,0ms)}
@@ -780,3 +837,8 @@ form[aria-busy="true"] input{cursor:wait}
 @media(max-width:760px) and (prefers-reduced-motion:no-preference){
   .hero-art{--hero-art-opacity:.7}
 }
+
+/* Use the exact checked-state artwork from the Figma checkbox component. */
+.quick-form .quick-consent input{width:20px;height:20px;min-height:20px}
+.consent input:checked,.quick-form .quick-consent input:checked{border:0;border-radius:4.1667px;background:#9cbeff url('./assets/checkbox-checked.svg') center / 20px 20px no-repeat}
+.consent input:checked::after,.quick-form .quick-consent input:checked::after{content:none}

@@ -217,15 +217,15 @@ export function createLeadServer({
       let result;
       try {
         result = await mailer.sendMail({
-          from: { name: "SEP:Chat", address: MAILBOX },
+          from: { name: "СЭП:ЧАТ", address: MAILBOX },
           to: MAILBOX,
           envelope: { from: MAILBOX, to: [MAILBOX] },
           ...(email.test(lead.contact)
             ? { replyTo: { address: lead.contact } }
             : {}),
-          subject: "Заявка на демонстрацию SEP:Chat",
+          subject: "Заявка на демонстрацию СЭП:ЧАТ",
           messageId: `<chat-${key}@pksep.ru>`,
-          text: `Новая заявка SEP:Chat\n\nИмя: ${lead.name}\nКонтакт: ${lead.contact}\nСогласие на обработку персональных данных: да\nИсточник: ${sources[lead.source]} (${lead.source})\nВремя: ${new Date().toISOString()}\nИдентификатор: ${requestId}`,
+          text: `Новая заявка СЭП:ЧАТ\n\nИмя: ${lead.name}\nКонтакт: ${lead.contact}\nСогласие на обработку персональных данных: да\nИсточник: ${sources[lead.source]} (${lead.source})\nВремя: ${new Date().toISOString()}\nИдентификатор: ${requestId}`,
           disableFileAccess: true,
           disableUrlAccess: true,
         });

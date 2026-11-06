@@ -116,7 +116,7 @@ function renderLeadState(form) {
   consent.disabled = state.pending;
   button.textContent = state.pending ? 'Отправляем...' : state.sent ? 'Отправлено' : state.buttonText;
   button.disabled = state.pending || state.sent || (form === modalForm &&
-    !(validName(name.value) && validContact(contact.value) && consent.checked));
+    !(name.value.trim() && contact.value.trim()));
 }
 
 function updateSubmitState() { renderLeadState(modalForm); }
@@ -159,7 +159,7 @@ async function sendLead(form) {
     if (response.ok && result?.ok === true && result.status === 'sent') {
       state.sent = true;
       message.dataset.state = 'success';
-      message.textContent = 'Заявка отправлена! Спасибо, мы свяжемся с вами, чтобы договориться о демонстрации SEP:Chat.';
+      message.textContent = 'Заявка отправлена! Спасибо, мы свяжемся с вами, чтобы договориться о демонстрации СЭП:ЧАТ.';
     } else {
       message.dataset.state = 'error';
       message.textContent = leadErrors[result?.code] || 'Не удалось отправить: заявка не отправлена. Попробуйте ещё раз или напишите на info@pksep.ru.';
@@ -223,20 +223,6 @@ function closeModal() {
 document.querySelectorAll('[data-open-modal]').forEach(button => button.addEventListener('click', () => openModal()));
 modalForm.addEventListener('input', updateSubmitState);
 modalForm.addEventListener('change', updateSubmitState);
-modalForm.elements.contact.addEventListener('blur', () => {
-  const input = modalForm.elements.contact;
-  const invalid = Boolean(input.value.trim()) && !validContact(input.value);
-  input.classList.toggle('is-invalid', invalid);
-  if (invalid) input.setAttribute('aria-invalid', 'true');
-  else input.removeAttribute('aria-invalid');
-});
-modalForm.elements.contact.addEventListener('input', () => {
-  const input = modalForm.elements.contact;
-  if (validContact(input.value)) {
-    input.classList.remove('is-invalid');
-    input.removeAttribute('aria-invalid');
-  }
-});
 document.querySelectorAll('[data-close-modal]').forEach(button => button.addEventListener('click', closeModal));
 modal.addEventListener('click', event => { if (event.target === modal) closeModal(); });
 function openDocument(kind) {
@@ -298,96 +284,123 @@ document.addEventListener('keydown', event => {
   if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
 });
 
-document.querySelectorAll('[data-quick-form]').forEach(form => {
-  const message = form.querySelector('.quick-message');
-  const name = form.elements.name;
-  const contact = form.elements.contact;
-  const consent = form.elements.consent;
-  const consentLabel = form.querySelector('.quick-consent');
-  const tooltip = form.querySelector('.consent-tooltip');
-  const contactTooltip = form.querySelector('.contact-tooltip');
-  const nameTooltip = form.querySelector('.name-tooltip');
+// Same validation lifecycle as ERP LeadForm: dismissal never changes field values,
+// consent, delivery status or retry keys, and lasts until the next submission.
+const validationControllers = [];
+document.querySelectorAll('[data-lead-source]').forEach(form => {
+  const {name, contact, consent} = form.elements;
+  const consentLabel = form.querySelector('.quick-consent,.consent');
+  const tips = {
+    name: form.querySelector('.name-tooltip'),
+    contact: form.querySelector('.contact-tooltip'),
+    consent: form.querySelector('.consent-tooltip')
+  };
+  let submitted = false, errorsDismissed = false, focusingInvalid = false;
+  let hasVisibleErrors = false;
+  const touched = new Set(), retrying = new Set(), positions = new Map();
+  form.noValidate = true;
 
-  function showNameError(show) {
-    nameTooltip.classList.toggle('is-visible', show);
-    nameTooltip.setAttribute('aria-hidden', String(!show));
+  function rememberScrollPositions() {
+    positions.clear();
+    positions.set(window, [window.scrollX, window.scrollY]);
+    positions.set(document, [window.scrollX, window.scrollY]);
+    for (let element = form; element; element = element.parentElement)
+      positions.set(element, [element.scrollLeft, element.scrollTop]);
   }
-
-  function showContactError(show) {
-    contactTooltip.classList.toggle('is-visible', show);
-    contactTooltip.setAttribute('aria-hidden', String(!show));
+  function showError(input, invalid) {
+    const tip = tips[input.name];
+    input.classList.toggle('is-invalid', invalid);
+    input.setAttribute('aria-invalid', String(invalid));
+    input.setCustomValidity('');
+    if (input === consent) consentLabel.classList.toggle('is-invalid', invalid);
+    tip.classList.toggle('is-visible', invalid);
+    tip.setAttribute('aria-hidden', String(!invalid));
+    if (invalid) {
+      tip.setAttribute('role', 'alert');
+      input.setAttribute('aria-describedby', tip.id);
+    } else {
+      tip.removeAttribute('role');
+      input.removeAttribute('aria-describedby');
+    }
   }
-
-  function showConsentError(show) {
-    consentLabel.classList.toggle('is-invalid', show);
-    tooltip.classList.toggle('is-visible', show);
-    tooltip.setAttribute('aria-hidden', String(!show));
-    if (show) consent.setAttribute('aria-invalid', 'true');
-    else consent.removeAttribute('aria-invalid');
+  function renderValidation() {
+    const invalidName = !errorsDismissed && !validName(name.value) &&
+      (submitted || touched.has(name)) && !retrying.has(name);
+    const invalidContact = !errorsDismissed && !validContact(contact.value) &&
+      (submitted || touched.has(contact)) && !retrying.has(contact);
+    const invalidConsent = !errorsDismissed && submitted && !consent.checked;
+    showError(name, invalidName);
+    showError(contact, invalidContact);
+    showError(consent, invalidConsent);
+    const visible = invalidName || invalidContact || invalidConsent;
+    if (visible && !hasVisibleErrors) rememberScrollPositions();
+    hasVisibleErrors = visible;
   }
-
+  function dismiss() {
+    if (!hasVisibleErrors) return;
+    errorsDismissed = true;
+    renderValidation();
+  }
+  validationControllers.push({dismiss, onScroll(event) {
+    if (!hasVisibleErrors || !event.target) return;
+    const target = event.target;
+    const position = target === document || target === window
+      ? [window.scrollX, window.scrollY]
+      : target instanceof Element ? [target.scrollLeft, target.scrollTop] : [0, 0];
+    const before = positions.get(target);
+    positions.set(target, position);
+    // Ignore a queued pre-validation scroll event if the position did not change.
+    if (!before || before[0] !== position[0] || before[1] !== position[1]) dismiss();
+  }});
   function updateConsentVisibility() {
-    const active = Boolean(name.value || contact.value);
+    const active = form === modalForm || submitted || Boolean(name.value || contact.value);
     form.classList.toggle('has-input', active);
     consentLabel.setAttribute('aria-hidden', String(!active));
     consent.tabIndex = active ? 0 : -1;
-    if (!active) {
-      consent.checked = false;
-      showConsentError(false);
-    }
   }
-
-  function validateField(input, error) {
-    const valid = input === contact ? validContact(input.value) : validName(input.value);
-    input.setCustomValidity(valid ? '' : error);
-    input.classList.toggle('is-invalid', !valid);
-    if (valid) input.removeAttribute('aria-invalid');
-    else input.setAttribute('aria-invalid', 'true');
-    if (input === contact) showContactError(!valid);
-    if (input === name) showNameError(!valid);
-    return valid;
+  for (const input of [name, contact]) {
+    const beginEditing = () => {
+      if (focusingInvalid) return;
+      retrying.add(input);
+      renderValidation();
+    };
+    input.addEventListener('pointerdown', beginEditing);
+    input.addEventListener('focus', beginEditing);
+    input.addEventListener('blur', () => {
+      retrying.delete(input);
+      touched.add(input);
+      renderValidation();
+    });
   }
-
-  form.addEventListener('input', event => {
-    message.hidden = true;
-    if (event.target === name || event.target === contact) {
-      if ((event.target === contact && contactTooltip.classList.contains('is-visible')) ||
-          (event.target === name && nameTooltip.classList.contains('is-visible'))) {
-        validateField(event.target, event.target === name ? 'Введите имя' : 'Введите корректный номер телефона или email');
-      } else {
-        event.target.setCustomValidity('');
-        event.target.classList.remove('is-invalid');
-        event.target.removeAttribute('aria-invalid');
-      }
-      updateConsentVisibility();
-    }
-  });
-  contact.addEventListener('blur', () => {
-    if (contact.value.trim()) validateField(contact, 'Введите корректный номер телефона или email');
-  });
-  form.addEventListener('change', () => {
-    message.hidden = true;
-    if (consent.checked) showConsentError(false);
-  });
+  form.addEventListener('input', () => {updateConsentVisibility(); renderValidation();});
+  form.addEventListener('change', renderValidation);
   form.addEventListener('submit', event => {
     event.preventDefault();
-    const hasInput = Boolean(name.value || contact.value);
-    if (hasInput) showConsentError(!consent.checked);
-    const nameValid = validateField(name, 'Введите имя');
-    if (!nameValid) { name.focus(); return; }
-    const contactValid = validateField(contact, 'Введите корректный номер телефона или email');
-    if (!contactValid) { contact.focus(); return; }
-    if (!consent.checked) { consent.focus(); return; }
+    const state = leadState(form);
+    if (state.pending || state.sent) return;
+    submitted = true;
+    errorsDismissed = false;
+    retrying.clear();
+    updateConsentVisibility();
+    renderValidation();
+    const invalid = !validName(name.value) ? name : !validContact(contact.value) ? contact : !consent.checked ? consent : null;
+    if (invalid) {
+      focusingInvalid = true;
+      try {invalid.focus({preventScroll:true});}
+      finally {focusingInvalid = false;}
+      return;
+    }
     sendLead(form);
   });
   updateConsentVisibility();
+  renderValidation();
 });
-
-modalForm.addEventListener('submit', event => {
-  event.preventDefault();
-  if (!modalForm.reportValidity()) return;
-  sendLead(modalForm);
-});
+const dismissValidationErrors = () => validationControllers.forEach(controller => controller.dismiss());
+document.addEventListener('pointerdown', dismissValidationErrors, true);
+// A keyboard-generated click also dismisses before the submit default action.
+document.addEventListener('click', dismissValidationErrors);
+window.addEventListener('wheel', dismissValidationErrors, {capture:true, passive:true});
+window.addEventListener('scroll', event => validationControllers.forEach(controller => controller.onScroll(event)), {capture:true, passive:true});
 
 menuButton.addEventListener('click', () => {
   const isOpen = menu.classList.toggle('open');
