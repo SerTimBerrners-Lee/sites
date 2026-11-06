@@ -1,4 +1,4 @@
-import{R as r,j as o,a as d,A as s}from"./App-C7YAXN4A.js";const l=`:root {
+import{R as r,j as o,a as d,A as s}from"./App-Mby_eWl-.js";const l=`:root {
   font-family: "Inter Variable", Inter, Arial, sans-serif;
   color: #262a38;
   background: #f8f9fd;
