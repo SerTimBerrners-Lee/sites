@@ -1,0 +1,20 @@
+# Insert into the existing HTTPS server block for pksep.ru.
+# Publish ONLY the ERP static build; backend/ and deploy/ are outside document root.
+# Defense in depth if the existing site root contains the full sites checkout.
+location ^~ /backend/ { return 404; }
+location ^~ /deploy/ { return 404; }
+
+location = /api/leads {
+    client_max_body_size 8k;
+    client_body_timeout 10s;
+    proxy_pass http://127.0.0.1:3001;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $remote_addr;
+    proxy_set_header Connection "";
+    proxy_connect_timeout 5s;
+    proxy_read_timeout 40s;
+    proxy_send_timeout 10s;
+    proxy_intercept_errors off;
+}

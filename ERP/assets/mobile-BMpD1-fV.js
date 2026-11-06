@@ -1,4 +1,4 @@
-import{R as r,j as o,a as d,A as s}from"./App-l5oS9J-e.js";const l=`:root {
+import{R as r,j as o,a as d,A as s}from"./App-CYuz0xfC.js";const l=`:root {
   font-family: "Inter Variable", Inter, Arial, sans-serif;
   color: #262a38;
   background: #f8f9fd;
@@ -3266,6 +3266,13 @@ dialog::backdrop {
   line-height: 1.45;
   box-shadow: 0 4px 5px #0000000d;
 }
+.form-notification.is-success {
+  border-color: #328655;
+  background: #f3fbf5;
+}
+.lead-form[aria-busy="true"] .lead-submit {
+  cursor: wait;
+}
 @keyframes reveal-consent {
   from {
     opacity: 0;
@@ -4610,7 +4617,8 @@ dialog::backdrop {
 }
 .chat-input-preview .send-tool {
   border: 0;
-  background: var(--tint);
+  border-radius: 5px;
+  background: var(--brand);
   transition: background-color 0.2s ease;
 }
 .chat-input-preview .send-tool:disabled {
@@ -4632,7 +4640,7 @@ dialog::backdrop {
   max-height: none;
   min-height: 0;
   overflow-y: auto;
-  overscroll-behavior: contain;
+  overscroll-behavior: auto;
   scroll-padding-block: 16px;
 }
 .chat-window.is-conversing .chat-window-header,
