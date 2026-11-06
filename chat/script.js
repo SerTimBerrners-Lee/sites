@@ -90,6 +90,7 @@ function validName(value) {
 // Shared contract with SEP ERP: keep one key for unchanged retries and never
 // report success until SMTP acceptance is confirmed by the same-origin API.
 const leadStates = new WeakMap();
+const leadStages = new WeakMap();
 function leadState(form) {
   if (!leadStates.has(form)) leadStates.set(form, {
     pending: false, sent: false, attempt: null, startedAt: Date.now(),
@@ -121,10 +122,67 @@ function renderLeadState(form) {
 
 function updateSubmitState() { renderLeadState(modalForm); }
 
+function setupLeadStage(form) {
+  const stage = form === modalForm ? form.closest('.modal') : form.closest('.strip-inner');
+  stage.classList.add('lead-stage');
+  stage.setAttribute('data-lead-stage', '');
+  const content = form === modalForm
+    ? [...stage.querySelectorAll('.modal-heading h2,#form-view,.modal-separator,.modal-phone')]
+    : [...stage.children];
+  content.forEach(element => element.setAttribute('data-lead-stage-content', ''));
+  const success = document.createElement('div');
+  success.className = 'lead-success';
+  success.setAttribute('data-lead-success', '');
+  success.setAttribute('role', 'status');
+  success.setAttribute('aria-live', 'polite');
+  success.setAttribute('aria-atomic', 'true');
+  success.setAttribute('aria-hidden', 'true');
+  const icon = document.createElement('span');
+  icon.className = 'lead-success-icon';
+  icon.setAttribute('aria-hidden', 'true');
+  const check = document.createElement('img');
+  check.src = './assets/lead-success-check.svg';
+  check.width = 27;
+  check.height = 19;
+  check.alt = '';
+  icon.append(check);
+  const title = document.createElement('h3');
+  title.id = `${form.dataset.leadSource}-success-title`;
+  title.tabIndex = -1;
+  title.textContent = 'Спасибо! Заявка отправлена';
+  const description = document.createElement('p');
+  const firstLine = document.createElement('span');
+  firstLine.textContent = 'Мы свяжемся с вами в течение рабочего дня';
+  const secondLine = document.createElement('span');
+  secondLine.textContent = 'и подберём удобное время для демонстрации';
+  description.append(firstLine, document.createTextNode(' '), secondLine);
+  success.append(icon, title, description);
+  stage.append(success);
+  leadStages.set(form, {stage, content, success, title});
+}
+
+function showLeadSuccess(form, complete) {
+  const {stage, content, success, title} = leadStages.get(form);
+  const ownedFocus = form.contains(document.activeElement);
+  stage.classList.toggle('is-complete', complete);
+  success.setAttribute('aria-hidden', String(!complete));
+  if (complete) success.dataset.state = 'success';
+  else success.removeAttribute('data-state');
+  content.forEach(element => {element.inert = complete; element.setAttribute('aria-hidden', String(complete));});
+  if (form === modalForm) stage.setAttribute('aria-labelledby', complete ? title.id : 'modal-title');
+  if (complete && ownedFocus) {
+    if (form === modalForm) modal.querySelector('[data-close-modal]').focus({preventScroll:true});
+    else requestAnimationFrame(() => {
+      if (leadState(form).sent) title.focus({preventScroll:true});
+    });
+  }
+}
+
 function editLead(form) {
   const state = leadState(form);
   if (state.pending) return;
   state.sent = false;
+  showLeadSuccess(form, false);
   form.querySelector('[role="status"]').hidden = true;
   renderLeadState(form);
 }
@@ -144,6 +202,9 @@ async function sendLead(form) {
   const message = form.querySelector('[role="status"]');
   const payload = {name: name.value.trim(), contact: contact.value.trim(), consent: true, source: form.dataset.leadSource};
   const fingerprint = JSON.stringify(payload);
+  // Reserve the current stage even when a previous server error is being cleared.
+  const {stage} = leadStages.get(form);
+  stage.style.minHeight = `${stage.getBoundingClientRect().height}px`;
   state.pending = true;
   message.hidden = true;
   renderLeadState(form);
@@ -158,8 +219,6 @@ async function sendLead(form) {
     const result = await response.json().catch(() => null);
     if (response.ok && result?.ok === true && result.status === 'sent') {
       state.sent = true;
-      message.dataset.state = 'success';
-      message.textContent = 'Заявка отправлена! Спасибо, мы свяжемся с вами, чтобы договориться о демонстрации СЭП:ЧАТ.';
     } else {
       message.dataset.state = 'error';
       message.textContent = leadErrors[result?.code] || 'Не удалось отправить: заявка не отправлена. Попробуйте ещё раз или напишите на info@pksep.ru.';
@@ -170,11 +229,13 @@ async function sendLead(form) {
   } finally {
     state.pending = false;
     renderLeadState(form);
-    message.hidden = false;
+    message.hidden = state.sent;
+    if (state.sent) showLeadSuccess(form, true);
   }
 }
 
 document.querySelectorAll('[data-lead-source]').forEach(form => {
+  setupLeadStage(form);
   leadState(form);
   form.addEventListener('input', () => editLead(form));
   form.addEventListener('change', () => editLead(form));
@@ -199,7 +260,10 @@ function openModal(values = {}) {
     editLead(modalForm);
   }
   updateSubmitState();
-  modalForm.elements.name.focus({preventScroll: true});
+  // Do not summon the mobile keyboard until the visitor taps an input.
+  const focusTarget = leadState(modalForm).sent || innerWidth <= 760 || matchMedia('(pointer: coarse)').matches
+    ? modal.querySelector('[data-close-modal]') : modalForm.elements.name;
+  focusTarget.focus({preventScroll: true});
 }
 
 function closeModal() {
@@ -278,7 +342,8 @@ document.addEventListener('keydown', event => {
     else closeModal();
   }
   if (event.key !== 'Tab') return;
-  const elements = [...activeModal.querySelectorAll('button:not(:disabled),input:not(:disabled),a[href],[tabindex="0"]')];
+  const elements = [...activeModal.querySelectorAll('button:not(:disabled),input:not(:disabled),a[href],[tabindex="0"]')]
+    .filter(element => !element.closest('[inert]') && element.getClientRects().length && getComputedStyle(element).visibility !== 'hidden');
   const first = elements[0], last = elements.at(-1);
   if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
   if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }

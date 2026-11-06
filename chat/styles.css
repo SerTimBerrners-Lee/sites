@@ -149,7 +149,7 @@
 
 .chat-section .feature-list li{border-radius:35px;padding:20px 25px;box-shadow:0 4px 4.9px #0000000d}
 .calls-section .feature-list li{width:386px;max-width:100%;border-radius:35px;padding:20px 15px;gap:8px;background:#606884;box-shadow:0 4px 4.9px #0000000d;white-space:nowrap}
-.calls-section .feature-list li:last-child{width:max-content;max-width:none;padding-inline:25px}
+.calls-section .feature-list li:last-child{width:max-content;max-width:none;padding-left:15px;padding-right:25px}
 .call-handset{--image-opacity:.1;position:absolute;left:-262px;top:437px;width:406px;height:406px;max-width:none;opacity:.1;pointer-events:none}
 .call-main{left:69px;top:59px;width:351px;max-width:none}
 .call-side{right:-12px;top:363px;width:312px;max-width:none}
@@ -410,8 +410,8 @@
 html{scrollbar-gutter:stable}
 .modal-backdrop{opacity:0;transition:opacity .24s ease}
 .modal-backdrop.is-open{opacity:1}
-.modal-backdrop .modal{opacity:0;transform:translateY(14px) scale(.985);transition:opacity .24s ease,transform .3s cubic-bezier(.2,.8,.2,1)}
-.modal-backdrop.is-open .modal{opacity:1;transform:translateY(0) scale(1)}
+.modal-backdrop .modal{opacity:0;transform:translateY(8px);transition:opacity .24s ease,transform .24s cubic-bezier(.2,.8,.2,1)}
+.modal-backdrop.is-open .modal{opacity:1;transform:translateY(0)}
 @media(prefers-reduced-motion:reduce){
   .modal-backdrop,.modal-backdrop .modal{transition-duration:.01ms}
 }
@@ -842,3 +842,29 @@ form[aria-busy="true"] input{cursor:wait}
 .quick-form .quick-consent input{width:20px;height:20px;min-height:20px}
 .consent input:checked,.quick-form .quick-consent input:checked{border:0;border-radius:4.1667px;background:#9cbeff url('./assets/checkbox-checked.svg') center / 20px 20px no-repeat}
 .consent input:checked::after,.quick-form .quick-consent input:checked::after{content:none}
+
+/* Keep the original form in the layout while fading to the Figma success state. */
+.lead-stage{position:relative}
+[data-lead-stage-content]{opacity:1;visibility:visible;transition:opacity .24s ease,visibility .24s ease}
+.lead-stage.is-complete [data-lead-stage-content]{opacity:0;visibility:hidden;pointer-events:none}
+.lead-success{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:15px;color:#fff;text-align:center;opacity:0;visibility:hidden;pointer-events:none;font-family:"SEP Inter",Inter,Arial,sans-serif;transition:opacity .24s ease,visibility .24s ease}
+.lead-stage.is-complete>.lead-success{opacity:1;visibility:visible}
+.lead-success-icon{display:grid;place-items:center;flex:none;width:60px;height:60px;border-radius:50%;background:#57d278}
+.lead-success-icon img{width:26.5px;height:19px;max-width:none}
+.lead-success h3{margin:0;font-size:30px;font-weight:700;line-height:normal;max-width:100%}
+.lead-success p{margin:0;font-size:20px;font-weight:400;line-height:normal;max-width:100%}
+.lead-success p span{display:block}
+.modal-backdrop .modal{margin-block:auto;flex-shrink:0}
+#demo-modal .lead-success{inset:30px;color:#181818}
+#demo-modal .lead-success h3{font-size:24px}
+#demo-modal .lead-success p{font-size:16px}
+#demo-modal .modal-close{position:relative;z-index:1}
+@media(max-width:760px){
+  .lead-success h3{font-size:24px}
+  .lead-success p{font-size:16px}
+  .lead-success p span{display:inline}
+  #demo-modal .lead-success{inset:25px}
+}
+@media(prefers-reduced-motion:reduce){
+  [data-lead-stage-content],.lead-success{transition:none}
+}
