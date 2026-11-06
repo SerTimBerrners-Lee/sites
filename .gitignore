@@ -1,4 +1,8 @@
 # Never commit server-side credentials. Keep only empty configuration templates.
+# ERP backend private runtime files. Keep secrets outside the public site root.
+backend/erp/node_modules/
+backend/erp/data/
+backend/erp/*.sqlite*
 .env
 .env.*
 !.env.example

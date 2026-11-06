@@ -1,0 +1,30 @@
+[Unit]
+Description=SEP ERP lead delivery API
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=sep-erp
+Group=sep-erp
+WorkingDirectory=/opt/sep-erp/backend/erp
+Environment=NODE_ENV=production
+EnvironmentFile=/etc/sep-erp/mail.env
+ExecStart=/usr/bin/node /opt/sep-erp/backend/erp/server.mjs
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+StateDirectory=sep-erp
+StateDirectoryMode=0700
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/sep-erp
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+
+[Install]
+WantedBy=multi-user.target
