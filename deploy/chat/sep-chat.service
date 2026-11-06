@@ -1,0 +1,30 @@
+[Unit]
+Description=SEP Chat lead delivery API
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=sep-chat
+Group=sep-chat
+WorkingDirectory=/opt/sep-chat/backend/chat
+Environment=NODE_ENV=production
+EnvironmentFile=/etc/sep-chat/mail.env
+ExecStart=/usr/bin/node /opt/sep-chat/backend/chat/server.mjs
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+StateDirectory=sep-chat
+StateDirectoryMode=0700
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/sep-chat
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+
+[Install]
+WantedBy=multi-user.target

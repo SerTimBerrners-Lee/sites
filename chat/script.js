@@ -62,8 +62,6 @@ if (heroArtwork) {
 
 const modal = document.getElementById('demo-modal');
 const modalForm = document.getElementById('demo-form');
-const modalMessage = document.getElementById('form-message');
-const submitButton = modalForm.querySelector('[type="submit"]');
 const menuButton = document.querySelector('.menu-toggle');
 const menu = document.getElementById('main-nav');
 const backTop = document.querySelector('.back-top');
@@ -80,17 +78,107 @@ let documentOpenFrame = null;
 
 function validContact(value) {
   const contact = value.trim();
-  if (contact.includes('@')) return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/u.test(contact);
-  const digits = contact.replace(/\D/g, '');
-  return /^\+?[\d\s().-]+$/u.test(contact) && digits.length >= 10 && digits.length <= 15;
+  if (contact.length > 150 || /[\u0000-\u001f\u007f]/.test(value)) return false;
+  if (contact.includes('@')) return /^[a-z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)+$/i.test(contact);
+  return /^[+\d\s()−-]+$/.test(contact) && /^\d{10,15}$/.test(contact.replace(/\D/g, ''));
 }
 
-function updateSubmitState() {
-  const name = modalForm.elements.name.value.trim();
-  const contact = modalForm.elements.contact.value.trim();
-  submitButton.disabled = !(name && validContact(contact) && modalForm.elements.consent.checked);
-  if (!modalMessage.hidden) modalMessage.hidden = true;
+function validName(value) {
+  return Boolean(value.trim()) && value.length <= 100 && !/[\u0000-\u001f\u007f]/.test(value);
 }
+
+// Shared contract with SEP ERP: keep one key for unchanged retries and never
+// report success until SMTP acceptance is confirmed by the same-origin API.
+const leadStates = new WeakMap();
+function leadState(form) {
+  if (!leadStates.has(form)) leadStates.set(form, {
+    pending: false, sent: false, attempt: null, startedAt: Date.now(),
+    buttonText: form.querySelector('[type="submit"]').textContent
+  });
+  return leadStates.get(form);
+}
+
+function submissionKey() {
+  // getRandomValues also works over a phone's local-network HTTP connection.
+  const bytes = crypto.getRandomValues(new Uint8Array(16));
+  bytes[6] = (bytes[6] & 15) | 64;
+  bytes[8] = (bytes[8] & 63) | 128;
+  const hex = [...bytes].map(byte => byte.toString(16).padStart(2, '0')).join('');
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+}
+
+function renderLeadState(form) {
+  const state = leadState(form);
+  const button = form.querySelector('[type="submit"]');
+  const {name, contact, consent} = form.elements;
+  form.setAttribute('aria-busy', String(state.pending));
+  name.readOnly = contact.readOnly = state.pending;
+  consent.disabled = state.pending;
+  button.textContent = state.pending ? 'Отправляем...' : state.sent ? 'Отправлено' : state.buttonText;
+  button.disabled = state.pending || state.sent || (form === modalForm &&
+    !(validName(name.value) && validContact(contact.value) && consent.checked));
+}
+
+function updateSubmitState() { renderLeadState(modalForm); }
+
+function editLead(form) {
+  const state = leadState(form);
+  if (state.pending) return;
+  state.sent = false;
+  form.querySelector('[role="status"]').hidden = true;
+  renderLeadState(form);
+}
+
+const leadErrors = {
+  rate_limited: 'Слишком много попыток. Подождите несколько минут и попробуйте снова.',
+  in_progress: 'Заявка ещё обрабатывается. Подождите немного и повторите проверку отправки.',
+  delivery_unknown: 'Не удалось подтвердить доставку. Не отправляйте заявку повторно: уточните её получение по телефону +7(812) 309-05-42 или на info@pksep.ru.',
+  too_fast: 'Пожалуйста, подождите пару секунд и повторите отправку.'
+};
+
+async function sendLead(form) {
+  const state = leadState(form);
+  if (state.pending || state.sent) return;
+  const {name, contact, consent, company} = form.elements;
+  if (!validName(name.value) || !validContact(contact.value) || !consent.checked) return;
+  const message = form.querySelector('[role="status"]');
+  const payload = {name: name.value.trim(), contact: contact.value.trim(), consent: true, source: form.dataset.leadSource};
+  const fingerprint = JSON.stringify(payload);
+  state.pending = true;
+  message.hidden = true;
+  renderLeadState(form);
+  try {
+    if (state.attempt?.fingerprint !== fingerprint) state.attempt = {fingerprint, key: submissionKey()};
+    const response = await fetch('/api/chat/leads', {
+      method: 'POST', credentials: 'same-origin',
+      headers: {'Content-Type': 'application/json', 'Idempotency-Key': state.attempt.key},
+      body: JSON.stringify({...payload, company: company.value, elapsedMs: Date.now() - state.startedAt}),
+      signal: AbortSignal.timeout(35000)
+    });
+    const result = await response.json().catch(() => null);
+    if (response.ok && result?.ok === true && result.status === 'sent') {
+      state.sent = true;
+      message.dataset.state = 'success';
+      message.textContent = 'Заявка отправлена! Спасибо, мы свяжемся с вами, чтобы договориться о демонстрации SEP:Chat.';
+    } else {
+      message.dataset.state = 'error';
+      message.textContent = leadErrors[result?.code] || 'Не удалось отправить: заявка не отправлена. Попробуйте ещё раз или напишите на info@pksep.ru.';
+    }
+  } catch {
+    message.dataset.state = 'error';
+    message.textContent = 'Не удалось подтвердить отправку заявки. Проверьте соединение и повторите попытку или напишите на info@pksep.ru.';
+  } finally {
+    state.pending = false;
+    renderLeadState(form);
+    message.hidden = false;
+  }
+}
+
+document.querySelectorAll('[data-lead-source]').forEach(form => {
+  leadState(form);
+  form.addEventListener('input', () => editLead(form));
+  form.addEventListener('change', () => editLead(form));
+});
 
 function openModal(values = {}) {
   if (modalCloseTimer !== null) clearTimeout(modalCloseTimer);
@@ -103,12 +191,13 @@ function openModal(values = {}) {
     modal.classList.add('is-open');
     modalOpenFrame = null;
   });
-  modalMessage.hidden = true;
-  modalForm.elements.name.value = values.name || '';
-  modalForm.elements.contact.value = values.contact || '';
-  modalForm.elements.contact.classList.remove('is-invalid');
-  modalForm.elements.contact.removeAttribute('aria-invalid');
-  modalForm.elements.consent.checked = false;
+  // Closing/reopening must not discard a pending request or its retry key.
+  if (!leadState(modalForm).pending && (values.name || values.contact)) {
+    modalForm.elements.name.value = values.name || '';
+    modalForm.elements.contact.value = values.contact || '';
+    modalForm.elements.consent.checked = false;
+    editLead(modalForm);
+  }
   updateSubmitState();
   modalForm.elements.name.focus({preventScroll: true});
 }
@@ -249,7 +338,7 @@ document.querySelectorAll('[data-quick-form]').forEach(form => {
   }
 
   function validateField(input, error) {
-    const valid = input === contact ? validContact(input.value) : Boolean(input.value.trim());
+    const valid = input === contact ? validContact(input.value) : validName(input.value);
     input.setCustomValidity(valid ? '' : error);
     input.classList.toggle('is-invalid', !valid);
     if (valid) input.removeAttribute('aria-invalid');
@@ -289,10 +378,7 @@ document.querySelectorAll('[data-quick-form]').forEach(form => {
     const contactValid = validateField(contact, 'Введите корректный номер телефона или email');
     if (!contactValid) { contact.focus(); return; }
     if (!consent.checked) { consent.focus(); return; }
-    // The landing has no submission endpoint yet. Keep the entered details
-    // in place and never claim that the lead was delivered.
-    message.textContent = 'Форма заполнена. Для отправки заявки нужно подключить серверный обработчик.';
-    message.hidden = false;
+    sendLead(form);
   });
   updateConsentVisibility();
 });
@@ -300,10 +386,7 @@ document.querySelectorAll('[data-quick-form]').forEach(form => {
 modalForm.addEventListener('submit', event => {
   event.preventDefault();
   if (!modalForm.reportValidity()) return;
-  // An API endpoint has not been supplied. Keep the local preview honest:
-  // never show the "Заявка отправлена" state without an actual delivery.
-  modalMessage.textContent = 'Форма заполнена. Для отправки заявки нужно подключить серверный обработчик.';
-  modalMessage.hidden = false;
+  sendLead(modalForm);
 });
 
 menuButton.addEventListener('click', () => {

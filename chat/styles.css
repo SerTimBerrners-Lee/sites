@@ -438,6 +438,11 @@ html{scrollbar-gutter:stable}
 .quick-form .quick-consent input:focus-visible{outline:3px solid #a7c7ff;outline-offset:2px}
 .quick-message{position:absolute;left:max(0px,calc((100% - 980px)/2));top:calc(100% + 40px);max-width:100%;margin:0;color:#e3edff;font-size:13px;line-height:1.3;text-align:left}
 .quick-message[hidden]{display:none}
+.lead-honeypot{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip-path:inset(50%);white-space:nowrap;pointer-events:none}
+.form-message[data-state="success"]{border-color:#9cbeff;background:#f3f7ff;color:#2355a0}
+.quick-message[data-state="error"]{color:#ffbcbc}
+form[aria-busy="true"] button[type="submit"]{cursor:wait}
+form[aria-busy="true"] input{cursor:wait}
 @media(max-width:760px){
   .quick-consent,.quick-message{position:static}
   .quick-consent{margin-top:4px}

@@ -1,0 +1,12 @@
+# Never commit server-side credentials. Keep only empty configuration templates.
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Server dependencies and private lead delivery state.
+node_modules/
+backend/chat/data/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
