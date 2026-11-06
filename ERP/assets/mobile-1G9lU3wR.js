@@ -1,4 +1,4 @@
-import{R as r,j as o,a as d,A as s}from"./App-CYuz0xfC.js";const l=`:root {
+import{R as r,j as o,a as d,A as s}from"./App-C7YAXN4A.js";const l=`:root {
   font-family: "Inter Variable", Inter, Arial, sans-serif;
   color: #262a38;
   background: #f8f9fd;
@@ -917,7 +917,7 @@ h1 span,
   top: calc(50% + 28.5px);
   background-image: url("/figma/cta-glow-right.svg");
 }
-.demo-section > .container > p:not(.form-message) {
+.demo-section .lead-stage-content > p:not(.form-message) {
   font-size: 20px;
   line-height: 1.2;
   margin-top: 20px;
@@ -1864,7 +1864,7 @@ dialog::backdrop {
   .demo-section h2 {
     font-size: 31px;
   }
-  .demo-section > .container > p:not(.form-message) {
+  .demo-section .lead-stage-content > p:not(.form-message) {
     font-size: 18px;
   }
   .demo-form input {
@@ -2304,7 +2304,7 @@ dialog::backdrop {
   .demo-section h2 {
     font-size: 28px;
   }
-  .demo-section > .container > p:not(.form-message) {
+  .demo-section .lead-stage-content > p:not(.form-message) {
     font-size: 16px;
     line-height: 1.45;
     margin-top: 18px;
@@ -3266,9 +3266,70 @@ dialog::backdrop {
   line-height: 1.45;
   box-shadow: 0 4px 5px #0000000d;
 }
-.form-notification.is-success {
-  border-color: #328655;
-  background: #f3fbf5;
+.lead-stage {
+  position: relative;
+  display: flow-root;
+}
+.lead-stage-content {
+  display: flow-root;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.24s ease, visibility 0.24s ease;
+}
+.lead-stage.is-complete > .lead-stage-content {
+  opacity: 0;
+  visibility: hidden;
+}
+.lead-success {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  color: #262a38;
+  text-align: center;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.24s ease, visibility 0.24s ease;
+}
+.lead-stage.is-complete > .lead-success {
+  opacity: 1;
+  visibility: visible;
+}
+.lead-success-icon {
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #57d278;
+}
+.lead-success-icon img {
+  display: block;
+  width: 26.5px;
+  height: 19px;
+}
+.lead-success h3 {
+  margin: 0;
+  font-size: 20px;
+  line-height: normal;
+  font-weight: 700;
+}
+.lead-success p {
+  max-width: 100%;
+  margin: 0;
+  font-size: 16px;
+  line-height: normal;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lead-stage-content,
+  .lead-success {
+    transition: none;
+  }
 }
 .lead-form[aria-busy="true"] .lead-submit {
   cursor: wait;
@@ -3644,7 +3705,7 @@ dialog::backdrop {
   .request-dialog .dialog-body {
     padding: 20px 25px 25px;
   }
-  .request-dialog .dialog-body > .request-intro {
+  .request-dialog .request-intro {
     font-size: 14px;
     margin-bottom: 20px;
   }
@@ -4174,7 +4235,7 @@ dialog::backdrop {
   .demo-section {
     padding-block: 60px;
   }
-  .demo-section > .container > p:not(.form-message) {
+  .demo-section .lead-stage-content > p:not(.form-message) {
     margin-top: 20px;
     line-height: 19px;
   }
