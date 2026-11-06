@@ -199,13 +199,13 @@
       const label = option.querySelector('span:last-child').textContent;
       trigger.setAttribute('aria-label', label);
       trigger.querySelector('[data-ai-setting-label]').textContent = label;
+      const brandIcon = option.dataset.icon.replace(/\.svg$/, '-brand.svg');
       for (const [selector, icon] of [
-        ['.ai-demo-desktop-setting-icon', option.dataset.icon],
-        ['.ai-demo-mobile-setting-icon', option.dataset.mobileIcon || option.dataset.icon]
+        ['.ai-demo-desktop-setting-icon', brandIcon],
+        ['.ai-demo-mobile-setting-icon', option.dataset.mobileIcon || brandIcon]
       ]) {
         const image = trigger.querySelector(selector);
         const url = new URL(`./assets/${icon}`, document.baseURI).href;
-        image.style.setProperty('--ai-demo-icon', `url("${url}")`);
         image.querySelector('img').src = url;
       }
       for (const item of options) {

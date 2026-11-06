@@ -32,6 +32,31 @@ async function fixture(t, width = 1440, reducedMotion = 'reduce') {
 async function settled(demo) {
   await demo.locator('.ai-demo-composer[aria-busy="false"]').waitFor();
 }
+async function assertSettingIcons(demo, width) {
+  const selector = width <= 600 ? '.ai-demo-mobile-setting-icon' : '.ai-demo-desktop-setting-icon';
+  const icons = demo.locator(selector);
+  assert.equal(await icons.count(), 2);
+  for (const icon of await icons.all()) {
+    assert.equal(await icon.isVisible(), true, 'setting icon wrapper is visible');
+    const paint = await icon.locator('img').evaluate(async img => {
+      await img.decode();
+      const css = getComputedStyle(img), bounds = img.getBoundingClientRect();
+      const canvas = document.createElement('canvas');
+      canvas.width = canvas.height = 48;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img,0,0,48,48);
+      const pixels = ctx.getImageData(0,0,48,48).data;
+      let brandPixels = 0;
+      for(let i = 0; i < pixels.length; i += 4) {
+        if(pixels[i+3] > 200 && Math.abs(pixels[i]-119) < 3 && Math.abs(pixels[i+1]-166) < 3 && pixels[i+2] > 252) brandPixels++;
+      }
+      return {opacity:css.opacity,width:bounds.width,height:bounds.height,brandPixels};
+    });
+    assert.equal(paint.opacity,'1','SVG image is not transparent');
+    assert.ok(paint.width > 0 && paint.height > 0,'SVG image has dimensions');
+    assert.ok(paint.brandPixels > 10,'SVG has visible brand-blue strokes');
+  }
+}
 async function capture(page, name) {
   if (!process.env.AI_REVIEW_DIR) return;
   await mkdir(process.env.AI_REVIEW_DIR, {recursive:true});
@@ -173,6 +198,7 @@ for (const width of [1440,390,320]) {
     assert.equal(style.color, 'rgb(119, 166, 255)');
     assert.equal(style.fontSize, '14px');
     if (width <= 600) assert.ok(Math.abs(style.width - 25.412) < .1);
+    await assertSettingIcons(demo,width);
     await mode.click();
     await modeMenu.waitFor();
     await page.waitForFunction(() => document.querySelector('[data-ai-mode]').getAttribute('aria-expanded') === 'true');
@@ -197,6 +223,7 @@ for (const width of [1440,390,320]) {
     }
     await permissionMenu.getByRole('menuitemradio', {name:'Автоматически подтверждать'}).click();
     assert.equal(await permission.getAttribute('aria-label'), 'Автоматически подтверждать');
+    await assertSettingIcons(demo,width);
     await mode.focus();
     await mode.press('ArrowDown');
     await modeMenu.waitFor();
@@ -205,6 +232,7 @@ for (const width of [1440,390,320]) {
     await page.keyboard.press('Enter');
     assert.equal(await mode.getAttribute('aria-label'), 'Продуманный ответ');
     assert.equal(await modeMenu.isVisible(), false);
+    await assertSettingIcons(demo,width);
     await mode.press('ArrowUp');
     await modeMenu.waitFor();
     await page.waitForFunction(() => document.querySelector('#ai-mode-menu [data-value="thoughtful"]') === document.activeElement);
